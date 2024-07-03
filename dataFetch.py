@@ -1,27 +1,25 @@
-### USER INITIALIZATION ###
-InstagramHandle = "aftersixmusic" # Replace with username of Instagram profile
-YoutubeLink = "https://www.youtube.com/@AfterSixMusic" # Replace with the link to your YouTube Channel
-SpotifyLink = "https://open.spotify.com/artist/4ujBf6QyfvJB2RXCepYrXW" # Replace with the link to your Spotify Artist page
-
 # IMPORTS
 
 import requests
 import instaloader
 from bs4 import BeautifulSoup
 import re
+import pandas as pd
 
-# GET DATA FROM LINKS
+### HANDLE DATA ###
 
-# Instagram Profile data using instagramy
-# L = instaloader.Instaloader()
-# IGProfile = instaloader.Profile.from_username(L.context, "lukegrooves") # https://instaloader.github.io/module/structures.html#instaloader.Profile.followers
-# currentIGFollowers = IGProfile.followers
+def refreshData(ig, yt, sp, ap):
+    # Update usernames in ScrapeLinks.csv
+    linkData = [ig, yt, sp, ap]
+    linkDf = pd.DataFrame(linkData, index=['Instagram', 'YouTube', 'Spotify', 'Apple Music'], columns=['Platform', 'Link'])
+    linkDf.to_csv("ScrapeLinks.csv")
+    # Fetch current stats using retrieve functions
 
-# # Youtube Channel data using 
-# youtubeGet = requests.get(YoutubeLink)
-# youtubeSoup = BeautifulSoup(youtubeGet.text, 'html.parser')
+    # Put new stats in data CSV
 
-# Purpose is to whittle down the results and only search this tag for subscriber count
+
+# Useful function
+# Purpose is to whittle down the scraping results to just the nth occurence of a desired HTML tag
 # tag = name of tag you wish to find
 # n = index of desired tag result
 def find_nth_tag(soup, tag, n):
@@ -35,30 +33,41 @@ def find_nth_tag(soup, tag, n):
         return tags[n]
     else:
         return None
-# print(youtubeGet)
-# targetScriptTag = str(find_nth_tag(youtubeSoup, "script", 36))
 
-# ytRePattern = '"content":"(\d+) subscribers"'
-# ytMatches = re.findall(ytRePattern, targetScriptTag)
+# FUNCTIONS TO GET DATA FROM LINKS
 
-# if ytMatches:
-#     currentSubscribers = int(ytMatches[0])
-#     print(currentSubscribers)
-# else:
-#     print("No YouTube match found :(")
+# Instagram Profile data using instagramy
+def instagramRetrieve(username):
+    L = instaloader.Instaloader()
+    IGProfile = instaloader.Profile.from_username(L.context, username) # https://instaloader.github.io/module/structures.html#instaloader.Profile.followers
+    return IGProfile.followers
+
+# # Youtube Channel data using BeautifulSoup web scraping
+def youtubeRetrieve(channelLink):
+    youtubeGet = requests.get(channelLink)
+    youtubeSoup = BeautifulSoup(youtubeGet.text, 'html.parser')
+    targetScriptTag = str(find_nth_tag(youtubeSoup, "script", 36))
+    ytRePattern = '"content":"(\d+) subscribers"'
+    ytMatches = re.findall(ytRePattern, targetScriptTag)
+    if ytMatches:
+        currentSubscribers = int(ytMatches[0])
+        return currentSubscribers
+    else:
+        print("No YouTube match found :(")
+        return 0
 
 
 # Spotify Artist data using BeautifulSoup web scraping
+def spotifyRetrieve(artistLink):
+    spotifyGet = requests.get(artistLink)
+    spotifySoup = BeautifulSoup(spotifyGet.text, 'html.parser')
+    targetMetaTag = str(find_nth_tag(spotifySoup, "meta", 6))
+    spotifyRePattern = '(\d+) monthly listeners.'
+    spotifyMatches = re.findall(spotifyRePattern, targetMetaTag)
 
-spotifyGet = requests.get(SpotifyLink)
-spotifySoup = BeautifulSoup(spotifyGet.text, 'html.parser')
-targetMetaTag = str(find_nth_tag(spotifySoup, "meta", 6))
-spotifyRePattern = '(\d+) monthly listeners.'
-spotifyMatches = re.findall(spotifyRePattern, targetMetaTag)
-
-if spotifyMatches:
-    currentMonthlyListeners = int(spotifyMatches[0])
-    print(currentMonthlyListeners)
-else: 
-    print("No Spotify match found :(")
+    if spotifyMatches:
+        currentMonthlyListeners = int(spotifyMatches[0])
+        print(currentMonthlyListeners)
+    else: 
+        print("No Spotify match found :(")
 
