@@ -6,7 +6,7 @@ This project was a 24-hour personal challenge to get my feet wet with webscrapin
 ![Screenshot of the finished dashboard](ReadmeScreenshot.png)
 
 ## Note on API Usage
-The purpose of this project was to **AVOID** any paid APIs that sell the historical data to make these graphs. Instead, the intended user is a small indie artist who is just starting out and wants to track their growth for free. They can enter their socials and come back each day or week to take a snapshot of their progress and look back at their growth. *For this reason, no external APIs are used and no historical data is available.*
+The purpose of this project was to **AVOID** any paid APIs that sell the historical data to make these graphs. Instead, the intended user is a small indie artist who is just starting out and wants to track their growth for free. They can enter their socials and come back each day or week to take a snapshot of their progress and look back at their growth. *For this reason, no external APIs are used and no externally collected historical data is available.*
 
 ## Steps for Usage
 1. Download the folder entitled "IndieData"
