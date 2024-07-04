@@ -3,13 +3,19 @@ import matplotlib.dates as mdates
 import numpy as np
 import pandas as pd
 from datetime import datetime
+import matplotlib.ticker as ticker
 
 windowWidth = 1200
 windowHeight = 700
 pad = 10
 my_dpi = 227
 
-# width=(3*windowWidth/4 - 6*pad) / 2, height=(windowHeight-5*pad) / 2
+def human_format(num):
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
 
 def bigGraph():
     df = pd.read_csv("DataPoints.csv", index_col=False)
@@ -31,30 +37,35 @@ def bigGraph():
         'font.size': 2,
         'axes.titlepad': 1.0
 })
-    print(plt.rcParams)
+    # print(plt.rcParams)
 
-    lw = 0.5
+    lw = 0.5 #line width for graphs
     date_format = '%b %Y' # "%Y-%m-%d %H:%M:%S.%f"
 
     fig, axs = plt.subplots(2, 2, dpi=my_dpi, figsize=((0.75*windowWidth - 2*pad)/ (2*my_dpi), (windowHeight-2*pad) / (2*my_dpi)))
-    axs[0,0].plot(x,yIG, linewidth=lw, color='yellow')
+    
+    axs[0,0].plot(x,yIG, linewidth=lw, color='#C13584')
     axs[0,0].xaxis.set_major_locator(plt.MaxNLocator(6))
     axs[0,0].xaxis.set_major_formatter(mdates.DateFormatter(date_format))
+    axs[0,0].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: human_format(x)))
     axs[0,0].set_title("Instagram Followers")
 
-    axs[0,1].plot(x,yYT, linewidth=lw, color='red')
+    axs[0,1].plot(x,yYT, linewidth=lw, color='#f94c57')
     axs[0,1].xaxis.set_major_locator(plt.MaxNLocator(6))
     axs[0,1].xaxis.set_major_formatter(mdates.DateFormatter(date_format))
+    axs[0,1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: human_format(x)))
     axs[0,1].set_title("YouTube Subscribers")
 
     axs[1,0].plot(x,ySP, linewidth=lw, color='green')
     axs[1,0].xaxis.set_major_locator(plt.MaxNLocator(6))
     axs[1,0].xaxis.set_major_formatter(mdates.DateFormatter(date_format))
+    axs[1,0].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: human_format(x)))
     axs[1,0].set_title("Spotify Monthly Listeners")
 
     axs[1,1].plot(x,yAP, linewidth=lw, color='pink')
     axs[1,1].xaxis.set_major_locator(plt.MaxNLocator(6))
     axs[1,1].xaxis.set_major_formatter(mdates.DateFormatter(date_format))
+    axs[1,1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: human_format(x)))
     axs[1,1].set_title("Apple Music Monthly Listeners")
     
 

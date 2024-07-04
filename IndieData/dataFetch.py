@@ -15,13 +15,12 @@ def refreshData(ig, yt, sp, ap):
     linkDf.to_csv("ScrapeLinks.csv", index=False)
 
     # Fetch current stats using retrieve functions
-    # Replace these with retrieve functions later
     dataDf = pd.read_csv('DataPoints.csv', index_col=False)
     currentData = pd.DataFrame({'Date':[datetime.now()], 
-                                'IGFollowers':[4], 
-                                'YTSubscribers':[6], 
-                                'SPMonthly':[63], 
-                                'APMonthly':[35]})
+                                'IGFollowers':[instagramRetrieve(ig)], 
+                                'YTSubscribers':[youtubeRetrieve(yt)], 
+                                'SPMonthly':[spotifyRetrieve(sp)], 
+                                'APMonthly':[appleRetrieve(ap)]})
     dataDf = pd.concat([dataDf, currentData], ignore_index=False)
     
     # Put new stats in data CSV
@@ -79,4 +78,10 @@ def spotifyRetrieve(artistLink):
         print(currentMonthlyListeners)
     else: 
         print("No Spotify match found :(")
+
+# Spotify Artist data using BeautifulSoup web scraping
+def appleRetrieve(artistLink):
+    # TODO
+    return 99
+
 

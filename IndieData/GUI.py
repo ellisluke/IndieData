@@ -1,10 +1,10 @@
 import customtkinter
+import dataFetch
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import graphs
-import dataFetch
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("dark-blue")
@@ -17,6 +17,9 @@ windowHeight = 700
 pad = 10
 
 def buildScreen():
+
+    def refresh():
+        dataFetch.refreshData(instagramField.get(), youtubeField.get(), spotifyField.get(), appleField.get())
         
 
     #### ---- BUILD THE SCREEEN ---- ####
@@ -80,12 +83,9 @@ def buildScreen():
     # # Top left frame
     # subframeTL = customtkinter.CTkFrame(master=mainFrameR, width=(3*windowWidth/4 - 6*pad) / 2, height=(windowHeight-5*pad) / 2)
     # subframeTL.grid(row=1, column=1, pady=pad, padx=pad)
-    def buildGraphs():
-        canvas = FigureCanvasTkAgg(graphs.bigGraph(), master=mainFrameR)
-        canvas.draw()
-        canvas.get_tk_widget().place(relx=0.0, rely=0.0)
-
-    buildGraphs()
+    canvas = FigureCanvasTkAgg(graphs.bigGraph(), master=mainFrameR)
+    canvas.draw()
+    canvas.get_tk_widget().place(relx=0.0, rely=0.0)
 
     # # Top right frame
     # subframeTR = customtkinter.CTkFrame(master=mainFrameR, width=(3*windowWidth/4 - 6*pad) / 2, height=(windowHeight-5*pad) / 2)
@@ -99,10 +99,6 @@ def buildScreen():
     # subframeBR = customtkinter.CTkFrame(master=mainFrameR, width=(3*windowWidth/4 - 6*pad) / 2, height=(windowHeight-5*pad) / 2)
     # subframeBR.grid(row=2, column=2, pady=0, padx=0)
 
-    def refresh():
-        dataFetch.refreshData(instagramField.get(), youtubeField.get(), spotifyField.get(), appleField.get())
-        buildGraphs()
-        
     app.mainloop()
 
     
