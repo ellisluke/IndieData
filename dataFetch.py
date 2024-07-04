@@ -1,5 +1,5 @@
 # IMPORTS
-
+from datetime import datetime
 import requests
 import instaloader
 from bs4 import BeautifulSoup
@@ -10,13 +10,18 @@ import pandas as pd
 
 def refreshData(ig, yt, sp, ap):
     # Update usernames in ScrapeLinks.csv
-    linkData = [ig, yt, sp, ap]
-    linkDf = pd.DataFrame(linkData, index=['Instagram', 'YouTube', 'Spotify', 'Apple Music'], columns=['Platform', 'Link'])
-    linkDf.to_csv("ScrapeLinks.csv")
+    linkData = [['Instagram', ig], ['YouTube', yt], ['Spotify', sp], ['Apple Music', ap]]
+    linkDf = pd.DataFrame(linkData, columns=['Platform', 'Link'])
+    linkDf.to_csv("ScrapeLinks.csv", index=False)
+
     # Fetch current stats using retrieve functions
-
+    # Replace these with retrieve functions later
+    dataDf = pd.read_csv('DataPoints.csv', index_col=False)
+    currentData = pd.DataFrame({'Date':[datetime.now()], 'IGFollowers':[4], 'YTSubscribers':[6], 'SPMontly':[63], 'APMonthly':[35]})
+    dataDf = pd.concat([dataDf, currentData], ignore_index=False)
+    
     # Put new stats in data CSV
-
+    dataDf.to_csv('DataPoints.csv', index=False)
 
 # Useful function
 # Purpose is to whittle down the scraping results to just the nth occurence of a desired HTML tag
@@ -25,7 +30,7 @@ def refreshData(ig, yt, sp, ap):
 def find_nth_tag(soup, tag, n):
     tags = soup.find_all(tag)
     # Helper to find your target tag
-    j = 0
+    # j = 0
     # for t in tags:
     #     print("NUMBER: ", j, " ", t)
     #     j = j+1
@@ -47,7 +52,7 @@ def youtubeRetrieve(channelLink):
     youtubeGet = requests.get(channelLink)
     youtubeSoup = BeautifulSoup(youtubeGet.text, 'html.parser')
     targetScriptTag = str(find_nth_tag(youtubeSoup, "script", 36))
-    ytRePattern = '"content":"(\d+) subscribers"'
+    ytRePattern = '"content":"(\d+) subscribers"' #RegEx to get the number of subscribers
     ytMatches = re.findall(ytRePattern, targetScriptTag)
     if ytMatches:
         currentSubscribers = int(ytMatches[0])
@@ -62,7 +67,7 @@ def spotifyRetrieve(artistLink):
     spotifyGet = requests.get(artistLink)
     spotifySoup = BeautifulSoup(spotifyGet.text, 'html.parser')
     targetMetaTag = str(find_nth_tag(spotifySoup, "meta", 6))
-    spotifyRePattern = '(\d+) monthly listeners.'
+    spotifyRePattern = '(\d+) monthly listeners.' #RegEx to get the number of montly listeners
     spotifyMatches = re.findall(spotifyRePattern, targetMetaTag)
 
     if spotifyMatches:

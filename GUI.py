@@ -1,6 +1,10 @@
 import customtkinter
 import dataFetch
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import graphs
 
 customtkinter.set_appearance_mode("light")
 customtkinter.set_default_color_theme("dark-blue")
@@ -15,12 +19,12 @@ def buildScreen():
 
     def refresh():
         dataFetch.refreshData(instagramField.get(), youtubeField.get(), spotifyField.get(), appleField.get())
-
+        
 
     #### ---- BUILD THE SCREEEN ---- ####
    
     # Fetch and populate data from ScrapeLinks.csv and DataPoints.csv
-    linkData = pd.read_csv("ScrapeLinks.csv")
+    linkData = pd.read_csv("ScrapeLinks.csv", index_col=False)
 
     ### LEFT FORM FRAME ###
     mainFrameL = customtkinter.CTkFrame(master=app, width=windowWidth/4, height=windowHeight-2*pad)
@@ -78,6 +82,9 @@ def buildScreen():
     # Top left frame
     subframeTL = customtkinter.CTkFrame(master=mainFrameR, width=(3*windowWidth/4 - 6*pad) / 2, height=(windowHeight-5*pad) / 2)
     subframeTL.grid(row=1, column=1, pady=pad, padx=pad)
+    canvas = FigureCanvasTkAgg(graphs.igGraph(), master=subframeTL)
+    canvas.draw()
+    canvas.get_tk_widget().place(relx=0.0, rely=0.0)
 
     # Top right frame
     subframeTR = customtkinter.CTkFrame(master=mainFrameR, width=(3*windowWidth/4 - 6*pad) / 2, height=(windowHeight-5*pad) / 2)
