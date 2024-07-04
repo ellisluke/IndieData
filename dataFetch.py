@@ -17,7 +17,11 @@ def refreshData(ig, yt, sp, ap):
     # Fetch current stats using retrieve functions
     # Replace these with retrieve functions later
     dataDf = pd.read_csv('DataPoints.csv', index_col=False)
-    currentData = pd.DataFrame({'Date':[datetime.now()], 'IGFollowers':[4], 'YTSubscribers':[6], 'SPMontly':[63], 'APMonthly':[35]})
+    currentData = pd.DataFrame({'Date':[datetime.now()], 
+                                'IGFollowers':[4], 
+                                'YTSubscribers':[6], 
+                                'SPMonthly':[63], 
+                                'APMonthly':[35]})
     dataDf = pd.concat([dataDf, currentData], ignore_index=False)
     
     # Put new stats in data CSV
